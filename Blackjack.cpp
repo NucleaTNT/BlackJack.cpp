@@ -6,9 +6,10 @@
 
 using std::string;
 
-#define ACE_VALUE -1
+#define ACE_VALUE (-1)
 #define DECK_SIZE 52
 #define SUIT_SIZE 13
+#define WIN_VALUE 21
 
 #define DEALER_WIN 0
 #define PLAYER_WIN 1
@@ -22,32 +23,36 @@ enum Suits {
 };
 
 struct Card {
-    bool IsInUse;     // Is this card currently in someone's deck? If so, don't deal it.
+    bool IsInUse{}; // Is this card currently in someone's deck? If so, don't deal it.
     string Name;    // String representation of the card's value (suit not included).
-    int Value;      // Integer value of the card. Ace's value is always taken to be 11
+    int Value{};    // Integer value of the card. Ace's value is always taken to be 11
                     // unless that would cause the deck to bust.
     Suits Suit;     // CLUBS || DIAMONDS || HEARTS || SPADES
 };
 
 class Hand {
     private:
+        Card *_deck;
+
         int *_heldCardIndices;
         unsigned int _handSize;
 
     public:
-        Hand();
+        explicit Hand(Card *deck);
         ~Hand();
 
         void addCard(int cardIndex);
         void clear();
 
         int *getCardIndices();
-        int getSize();
+        int getSize() const;
+        int getValue();
 };
 
-Hand::Hand() {
+Hand::Hand(Card *deck) {
     _heldCardIndices = nullptr;
     _handSize = 0;
+    _deck = deck;
 }
 
 Hand::~Hand() {
@@ -74,8 +79,27 @@ int *Hand::getCardIndices() {
     return _heldCardIndices;
 }
 
-int Hand::getSize() {
+int Hand::getSize() const {
     return _handSize;
+}
+
+int Hand::getValue() {
+    int sum = 0;
+    for (int i = 0; i < _handSize; i++) {
+        int curValue = _deck[_heldCardIndices[i]].Value;
+
+        if (curValue == ACE_VALUE) {
+            if ((sum + 11) > WIN_VALUE) {
+                curValue = 1;
+            } else {
+                curValue = 11;
+            }
+        }
+
+        sum += curValue;
+    }
+
+    return sum;
 }
 
 const string SUIT_NAME_STRINGS[] = {
@@ -105,7 +129,7 @@ void initializeDeck(Card *deckBuffer) {
     }
 }
 
-string formatCardName(Card card) {
+string formatCardName(const Card& card) {
     return card.Name + " of " + SUIT_NAME_STRINGS[card.Suit];
 }
 
@@ -122,11 +146,13 @@ int main() {
     Card *deck = new Card[DECK_SIZE];
     initializeDeck(deck);
 
-    Hand hand;
+    Hand hand(deck);
     hand.addCard(getRandIndex());
     hand.addCard(getRandIndex());
 
     for (int i = 0; i < hand.getSize(); i++) {
         std::cout << formatCardName(deck[hand.getCardIndices()[i]]) << std::endl; 
     }
+
+    std::cout << hand.getValue();
 }  
