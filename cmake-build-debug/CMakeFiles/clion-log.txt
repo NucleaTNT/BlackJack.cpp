@@ -1,6 +1,6 @@
-/home/nucleatnt/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/222.4167.35/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/nucleatnt/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/222.4167.35/bin/ninja/linux/ninja -G Ninja -S /home/nucleatnt/Dev/C++/Blackjack -B /home/nucleatnt/Dev/C++/Blackjack/cmake-build-debug
--- The C compiler identification is GNU 11.2.0
--- The CXX compiler identification is GNU 11.2.0
+/home/nucleatnt/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/222.4345.21/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /home/nucleatnt/Dev/C++/Blackjack -B /home/nucleatnt/Dev/C++/Blackjack/cmake-build-debug
+-- The C compiler identification is GNU 11.3.0
+-- The CXX compiler identification is GNU 11.3.0
 -- Detecting C compiler ABI info
 -- Detecting C compiler ABI info - done
 -- Check for working C compiler: /usr/bin/cc - skipped

@@ -176,14 +176,17 @@ void dealerChoiceLoop(Card *deck, Hand *dealerHand) {
 
 void playerChoiceLoop(Card *deck, Hand *playerHand) {
     while (!playerHand->checkForBust()) {
-        std::cout << "Your hand's value is " << playerHand->getValue() << "\n";
+        std::cout << "Your hand's value is " << playerHand->getValue() << ". [";
+        for (int i = 0; i < playerHand->getSize(); i++) {
+            std::cout << formatCardName(deck[playerHand->getCardIndices()[i]]) << (i + 1 == playerHand->getSize() ? "]\n" : ", ");
+        }
 
         string playerInput;
         do {
             playerInput = "";
             std::cout << "Would you like to [h]it or [s]tick? ";
             std::cin >> playerInput;
-            std::cout << "\n\n";
+            std::cout << "\n";
         } while (!(playerInput[0] == 'h' || playerInput[0] == 's'));
 
         if (playerInput[0] == 'h') {
@@ -208,6 +211,18 @@ int main() {
     playerChoiceLoop(deck, &playerHand);
     dealerChoiceLoop(deck, &dealerHand);
 
+    std::cout << "Player Hand: ";
+    for (int i = 0; i < playerHand.getSize(); i++) {
+        std::cout << formatCardName(deck[playerHand.getCardIndices()[i]]) << (i + 1 == playerHand.getSize() ? " | " : ", ");
+    }
+    std::cout << "[" << playerHand.getValue() << (playerHand.checkForBust() ? "/Bust]\n" : "/Not Bust]\n");
+
+    std::cout << "Dealer Hand: ";
+    for (int i = 0; i < dealerHand.getSize(); i++) {
+        std::cout << formatCardName(deck[dealerHand.getCardIndices()[i]]) << (i + 1 == dealerHand.getSize() ? " | " : ", ");
+    }
+    std::cout << "[" << dealerHand.getValue() << (dealerHand.checkForBust() ? "/Bust]\n" : "/Not Bust]\n");
+
     size_t gameOutcome = -1;
     if (dealerHand.checkForBust()) {
         if (playerHand.checkForBust()) {
@@ -227,16 +242,6 @@ int main() {
         }
     }
 
-    for (int i = 0; i < playerHand.getSize(); i++) {
-        std::cout << formatCardName(deck[playerHand.getCardIndices()[i]]) << (i + 1 == playerHand.getSize() ? "\n" : ", ");
-    }
-    std::cout << "Player Value: " << playerHand.getValue() << (playerHand.checkForBust() ? " | Bust\n\n" : " | Not Bust\n\n");
-
-    for (int i = 0; i < dealerHand.getSize(); i++) {
-        std::cout << formatCardName(deck[dealerHand.getCardIndices()[i]]) << (i + 1 == dealerHand.getSize() ? "\n" : ", ");
-    }
-    std::cout << "Dealer Value: " << dealerHand.getValue() << (dealerHand.checkForBust() ? " | Bust\n" : " | Not Bust\n");
-
     switch (gameOutcome) {
         case DEALER_WIN: {
             std::cout << "\nThe Dealer has won!\n";
@@ -245,6 +250,7 @@ int main() {
 
         case PLAYER_WIN: {
             std::cout << "\nCongratulations you have won!\n";
+            break;
         }
 
         case NOBODY_WIN: {
@@ -253,7 +259,7 @@ int main() {
         }
 
         default: {
-            std::cout << "\nThere was an issue calculating the winner of this game!\n";
+            std::cout << "\nThere was an issue calculating the winner of this game.\n";
             break;
         }
     }
