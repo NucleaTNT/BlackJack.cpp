@@ -99,19 +99,31 @@ size_t Hand::getSize() const {
 }
 
 size_t Hand::getValue() {
-    int sum = 0;
+    int sum = 0, aceCount = 0;
+
     for (int i = 0; i < _handSize; i++) {
         int curValue = _deck[_heldCardIndices[i]].Value;
 
         if (curValue == ACE_VALUE) {
-            if ((sum + 11) > WIN_VALUE) {
-                curValue = 1;
-            } else {
-                curValue = 11;
-            }
+            aceCount++;
+            continue;
         }
 
         sum += curValue;
+    }
+
+    // Handle aces after the "hard value" cards have been calculated.
+    // This ensures no accidental busts where ace's values could've been lowered.
+    while (aceCount--) {
+        int remainingPoints = WIN_VALUE - sum;
+
+        // If we can fit in all aces to come with enough room for an 11, raise
+        // this ace's value.
+        if (((remainingPoints - aceCount)) >= 11) {
+            sum += 11;
+        } else {
+            sum++;
+        }
     }
 
     return sum;
@@ -148,10 +160,30 @@ void initializeDeck(Card *deckBuffer) {
         };
 
         // Initialize face cards
-        deckBuffer[(suit * SUIT_SIZE)] = { .IsInUse = false, .Name = "Ace", .Value = ACE_VALUE, .Suit = (Suits)suit };
-        deckBuffer[(10 + (suit * SUIT_SIZE))] = { .IsInUse = false, .Name = "Jack", .Value = 10, .Suit = (Suits)suit };
-        deckBuffer[(11 + (suit * SUIT_SIZE))] = { .IsInUse = false, .Name = "Queen", .Value = 10, .Suit = (Suits)suit };
-        deckBuffer[(12 + (suit * SUIT_SIZE))] = { .IsInUse = false, .Name = "King", .Value = 10, .Suit = (Suits)suit }; 
+        deckBuffer[(suit * SUIT_SIZE)] = {
+                .IsInUse = false,
+                .Name = "Ace",
+                .Value = ACE_VALUE,
+                .Suit = (Suits)suit
+        };
+        deckBuffer[(10 + (suit * SUIT_SIZE))] = {
+                .IsInUse = false,
+                .Name = "Jack",
+                .Value = 10,
+                .Suit = (Suits)suit
+        };
+        deckBuffer[(11 + (suit * SUIT_SIZE))] = {
+                .IsInUse = false,
+                .Name = "Queen",
+                .Value = 10,
+                .Suit = (Suits)suit
+        };
+        deckBuffer[(12 + (suit * SUIT_SIZE))] = {
+                .IsInUse = false,
+                .Name = "King",
+                .Value = 10,
+                .Suit = (Suits)suit
+        };
     }
 }
 
